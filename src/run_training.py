@@ -63,7 +63,7 @@ if __name__ == "__main__":
     reinforce_args = {
         'steps_per_epoch': 1000,
         'replay_start_size': 500,
-        'replay_memory_size': 10000,
+        'replay_memory_size': 5000,
         'epsilon_decay': 100000,
         'epsilon_min': 0.1,
         'epsilon_start': 1.0,
