@@ -7,7 +7,7 @@ from progressbar import ProgressBar,Percentage,Bar,ETA
 from sklearn.cross_validation import KFold
 from termcolor import cprint
 
-from DQN import agent, q_network
+from DQN import agent, q_network, ddpg_network
 from IR.dialoguemanager import DialogueManager
 from IR.environment import Environment
 from IR.human import SimulatedUser
@@ -124,7 +124,28 @@ class Experiment(object):
         batch_accumulator = 'sum'
         rng = np.random.RandomState()
 
-        network = q_network.DeepQLearner(
+        # network = q_network.DeepQLearner(
+        #                                 input_width       = feature_length,
+        #                                 input_height      = input_height,
+        #                                 net_width         = training_args.get('model_width'),
+        #                                 net_height        = training_args.get('model_height'),
+        #                                 num_actions       = num_actions,
+        #                                 num_frames        = phi_length,
+        #                                 discount          = discount,
+        #                                 learning_rate     = training_args.get('learning_rate'),
+        #                                 rho               = rms_decay,
+        #                                 rms_epsilon       = rms_epsilon,
+        #                                 momentum          = momentum,
+        #                                 nesterov_momentum = nesterov_momentum,
+        #                                 clip_delta        = training_args.get('clip_delta'),
+        #                                 freeze_interval   = reinforce_args.get('freeze_interval'),
+        #                                 batch_size        = training_args.get('batch_size'),
+        #                                 network_type      = network_type,
+        #                                 update_rule       = training_args.get('update_rule'),
+        #                                 batch_accumulator = batch_accumulator,
+        #                                 rng               = rng
+        #                                   )
+        network = ddpg_network.DDPG(
                                         input_width       = feature_length,
                                         input_height      = input_height,
                                         net_width         = training_args.get('model_width'),
@@ -144,7 +165,10 @@ class Experiment(object):
                                         update_rule       = training_args.get('update_rule'),
                                         batch_accumulator = batch_accumulator,
                                         rng               = rng
-                                          )
+
+        )
+        
+        
         # Agent
         experiment_prefix = os.path.join(result_dir,retrieval_args.get("exp_name"),'model')
 
