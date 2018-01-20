@@ -74,7 +74,8 @@ class DDPG(object):
 
         self.sess.run(tf.global_variables_initializer())
 
-    def choose_action(self, _ ,s):
+    def choose_action(self, s, _):
+        s = s.reshape(self.input_width)
         return self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
 
     def train(self, bs, ba, br, bs_,terminals):
