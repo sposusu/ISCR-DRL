@@ -79,7 +79,7 @@ class DDPG(object):
         action_list = self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
         return np.argmax(action_list) 
 
-    def train(self, bs, ba, br, bs_,terminals):
+    def train(self, bs, ba, br, bs_, terminals):
         # soft target replacement
         self.sess.run(self.soft_replace)
 
@@ -92,7 +92,9 @@ class DDPG(object):
 
         bs = np.reshape(bs,(self.batch_size,self.input_width))
         bs_ = np.reshape(bs_,(self.batch_size,self.input_width))
-
+        temp_a  = np.zeros((self.batch_size, self.num_actions4))
+        temp_a[np.arange(self.batch_siz(), ba] = 1
+        ba = temp_a
         self.sess.run(self.atrain, {self.S: bs})
         self.sess.run(self.ctrain, {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
 
