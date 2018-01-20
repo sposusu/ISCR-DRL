@@ -109,7 +109,7 @@ class DDPG(object):
     def _build_c(self, s, a, scope, trainable):
         with tf.variable_scope(scope):
             n_l1 = self.network_width
-            w1_s = tf.get_variable('w1_s', [self.self.input_width, n_l1], trainable=trainable)
+            w1_s = tf.get_variable('w1_s', [self.input_width, n_l1], trainable=trainable)
             w1_a = tf.get_variable('w1_a', [self.num_actions, n_l1], trainable=trainable)
             b1 = tf.get_variable('b1', [1, n_l1], trainable=trainable)
             net = tf.nn.relu(tf.matmul(s, w1_s) + tf.matmul(a, w1_a) + b1)
