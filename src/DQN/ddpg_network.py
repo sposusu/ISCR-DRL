@@ -93,7 +93,7 @@ class DDPG(object):
         bs = np.reshape(bs,(self.batch_size,self.input_width))
         bs_ = np.reshape(bs_,(self.batch_size,self.input_width))
         temp_a  = np.zeros((self.batch_size, self.num_actions4))
-        temp_a[np.arange(self.batch_siz(), ba] = 1
+        temp_a[np.arange(self.batch_size), ba] = 1
         ba = temp_a
         self.sess.run(self.atrain, {self.S: bs})
         self.sess.run(self.ctrain, {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
