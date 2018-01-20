@@ -40,7 +40,7 @@ class DDPG(object):
         self.lr  = learning_rate
         self.num_frames = num_frames
         self.rng = rng
-        self.TAU = 0.01      # soft replacement
+        self.TAU = 0.1      # soft replacement
 
 
         self.S = tf.placeholder(tf.float32, [None, self.input_width], 's')
@@ -89,10 +89,10 @@ class DDPG(object):
 
         # indices = np.random.choice(MEMORY_CAPACITY, size=BATCH_SIZE)
         # bt = self.memory[indices, :]
-        # bs = bt[:, :self.self.input_width]
-        # ba = bt[:, self.self.input_width: self.self.input_width + self.num_actions]
-        # br = bt[:, -self.self.input_width - 1: -self.self.input_width]
-        # bs_ = bt[:, -self.self.input_width:]
+        # bs = bt[:, :self.input_width]
+        # ba = bt[:, self.input_width: selfinput_width + self.num_actions]
+        # br = bt[:, -self.input_width - 1: -self.input_width]
+        # bs_ = bt[:, -self.input_width:]
 
         bs = np.reshape(bs,(self.batch_size,self.input_width))
         bs_ = np.reshape(bs_,(self.batch_size,self.input_width))

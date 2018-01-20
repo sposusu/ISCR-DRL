@@ -52,10 +52,10 @@ if __name__ == "__main__":
 
     training_args = {
         'num_epochs': args.num_epochs,
-        'batch_size': 256,
+        'batch_size': 64,
         'model_width': 1024,
         'model_height': 2,
-        'learning_rate': 0.00025,
+        'learning_rate': 0.0025,
         'clip_delta': 1.0,
         'update_rule': 'deepmind_rmsprop'
     }
