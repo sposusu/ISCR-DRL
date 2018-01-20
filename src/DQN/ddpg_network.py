@@ -97,6 +97,7 @@ class DDPG(object):
         ba = temp_a
         self.sess.run(self.atrain, {self.S: bs})
         self.sess.run(self.ctrain, {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
+        return 0
 
     def store_transition(self, s, a, r, s_):
         transition = np.hstack((s, a, [r], s_))
