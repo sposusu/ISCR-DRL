@@ -76,7 +76,7 @@ class DDPG(object):
 
         self.sess.run(tf.global_variables_initializer())
 
-    def choose_action(self, s, _):
+    def choose_action(self, s, epsilon):
         if self.rng.rand() < epsilon:
             return self.rng.randint(0, self.num_actions)
         s = s.reshape(self.input_width)
