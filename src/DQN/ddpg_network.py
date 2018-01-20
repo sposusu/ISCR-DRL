@@ -31,7 +31,7 @@ class DDPG(object):
         #self.num_actions, self.self.input_width,  = num_actions, self.input_width,
         self.input_width = input_width
         self.input_height = input_height
-        self.network_width = network_width
+        self.network_width = net_width
         self.num_actions = num_actions
         self.discount = discount
         self.batch_size = batch_size
