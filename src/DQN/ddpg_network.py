@@ -8,7 +8,7 @@ import numpy as np
 #LR_A = 0.001    # learning rate for actor
 #LR_C = 0.002    # learning rate for critic
 #GAMMA = 0.9     # reward discount
-#TAU = 0.01      # soft replacement
+
 #MEMORY_CAPACITY = 10000
 #BATCH_SIZE = 32
 
@@ -23,7 +23,7 @@ class DDPG(object):
                  rms_epsilon, momentum, nesterov_momentum, clip_delta, freeze_interval,
                  batch_size, network_type, update_rule,
                  batch_accumulator, rng, input_scale=255.0):
-        self.memory = np.zeros((MEMORY_CAPACITY, self.input_width * 2 + num_actions + 1), dtype=np.float32)
+        #self.memory = np.zeros((MEMORY_CAPACITY, self.input_width * 2 + num_actions + 1), dtype=np.float32)
         self.pointer = 0
         self.sess = tf.Session()
         self.a_replace_counter, self.c_replace_counter = 0, 0
@@ -39,6 +39,7 @@ class DDPG(object):
         self.LR_C = learning_rate
         self.lr  = learning_rate
         self.num_frames = num_frames
+        self.TAU = 0.01      # soft replacement
 
         self.S = tf.placeholder(tf.float32, [None, self.input_width], 's')
         self.S_ = tf.placeholder(tf.float32, [None, self.input_width], 's_')
@@ -60,7 +61,7 @@ class DDPG(object):
         self.ct_params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='Critic/target')
 
         # target net replacement
-        self.soft_replace = [[tf.assign(ta, (1 - TAU) * ta + TAU * ea), tf.assign(tc, (1 - TAU) * tc + TAU * ec)]
+        self.soft_replace = [[tf.assign(ta, (1 - self.TAU) * ta + self.TAU * ea), tf.assign(tc, (1 - self.TAU) * tc + self.TAU * ec)]
                              for ta, ea, tc, ec in zip(self.at_params, self.ae_params, self.ct_params, self.ce_params)]
 
         q_target = self.R + self.discount * q_
