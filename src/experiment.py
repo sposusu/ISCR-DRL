@@ -220,7 +220,7 @@ class Experiment(object):
 
             ## TRAIN ##
             self.run_epoch()
-            self.agent.finish_epoch(epoch)
+            #self.agent.finish_epoch(epoch)
 
             ## TEST ##
             self.agent.start_testing()
