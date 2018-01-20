@@ -39,7 +39,9 @@ class DDPG(object):
         self.LR_C = learning_rate
         self.lr  = learning_rate
         self.num_frames = num_frames
+        self.rng = rng
         self.TAU = 0.01      # soft replacement
+
 
         self.S = tf.placeholder(tf.float32, [None, self.input_width], 's')
         self.S_ = tf.placeholder(tf.float32, [None, self.input_width], 's_')
@@ -75,6 +77,8 @@ class DDPG(object):
         self.sess.run(tf.global_variables_initializer())
 
     def choose_action(self, s, _):
+        if self.rng.rand() < epsilon:
+            return self.rng.randint(0, self.num_actions)
         s = s.reshape(self.input_width)
         action_list = self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
         return np.argmax(action_list) 
