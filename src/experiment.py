@@ -116,7 +116,7 @@ class Experiment(object):
         num_actions  = 5
         phi_length   = 1 # input 4 frames at once num_frames
         discount     = 1.
-        rms_decay    = 0.98
+        rms_decay    = 0.99
         rms_epsilon  = 0.1
         momentum     = 0.
         nesterov_momentum = 0.
