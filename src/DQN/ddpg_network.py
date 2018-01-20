@@ -76,9 +76,8 @@ class DDPG(object):
 
     def choose_action(self, s, _):
         s = s.reshape(self.input_width)
-        k = self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
-        print(k)
-        return k 
+        action_list = self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
+        return np.argmax(action_list) 
 
     def train(self, bs, ba, br, bs_,terminals):
         # soft target replacement
