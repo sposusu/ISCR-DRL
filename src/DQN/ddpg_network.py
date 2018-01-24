@@ -36,11 +36,11 @@ class DDPG(object):
         self.discount = discount
         self.batch_size = batch_size
         self.LR_A = learning_rate
-        self.LR_C = learning_rate
+        self.LR_C = learning_rate*2
         self.lr  = learning_rate
         self.num_frames = num_frames
         self.rng = rng
-        self.TAU = 0.1      # soft replacement
+        self.TAU = 0.02      # soft replacement
 
 
         self.S = tf.placeholder(tf.float32, [None, self.input_width], 's')
@@ -72,6 +72,7 @@ class DDPG(object):
         self.ctrain = tf.train.AdamOptimizer(self.LR_C).minimize(td_error, var_list=self.ce_params)
 
         a_loss = - tf.reduce_mean(q)    # maximize the q
+        self.a_loss = a_loss
         self.atrain = tf.train.AdamOptimizer(self.LR_A).minimize(a_loss, var_list=self.ae_params)
 
         self.sess.run(tf.global_variables_initializer())
@@ -81,6 +82,9 @@ class DDPG(object):
             return self.rng.randint(0, self.num_actions)
         s = s.reshape(self.input_width)
         action_list = self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
+        print(action_list)
+        if np.count_nonzero(action_list == 0) == 5:
+            return self.rng.randint(0, self.num_actions)
         return np.argmax(action_list) 
 
     def train(self, bs, ba, br, bs_, terminals):
@@ -97,11 +101,15 @@ class DDPG(object):
         bs = np.reshape(bs,(self.batch_size,self.input_width))
         bs_ = np.reshape(bs_,(self.batch_size,self.input_width))
         temp_a  = np.zeros((self.batch_size, self.num_actions))
+        ba = ba.reshape(-1)
         temp_a[np.arange(self.batch_size), ba] = 1
         ba = temp_a
+        #print(ba)
         self.sess.run(self.atrain, {self.S: bs})
-        self.sess.run(self.ctrain, {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
-        return 0
+        _, a_loss = self.sess.run([self.ctrain,self.a_loss], {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
+        #loss = self.sess.run(self.a_loss)
+        print(a_loss)
+        return 0#a_loss
 
     def store_transition(self, s, a, r, s_):
         transition = np.hstack((s, a, [r], s_))
@@ -112,7 +120,8 @@ class DDPG(object):
     def _build_a(self, s, scope, trainable):
         with tf.variable_scope(scope):
             net = tf.layers.dense(s, self.network_width, activation=tf.nn.relu, name='l1', trainable=trainable)
-            a = tf.layers.dense(net, self.num_actions, activation=tf.nn.tanh, name='a', trainable=trainable)
+            bn = tf.contrib.layers.batch_norm(net, center=True, scale=True, is_training=trainable,scope='bn')
+            a = tf.layers.dense(bn, self.num_actions, activation=tf.nn.relu, name='a', trainable=trainable)
             return a #tf.multiply(a, self.a_bound, name='scaled_a')
 
     def _build_c(self, s, a, scope, trainable):
