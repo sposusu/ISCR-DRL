@@ -40,6 +40,7 @@ class DDPG(object):
         self.lr  = learning_rate
         self.num_frames = num_frames
         self.rng = rng
+        self.clip_delta = clip_delta
         self.TAU = 0.02      # soft replacement
 
 
@@ -68,11 +69,18 @@ class DDPG(object):
 
         q_target = self.R + self.discount * q_
         # in the feed_dic for the td_error, the self.a should change to actions in memory
-        td_error = tf.losses.mean_squared_error(labels=q_target, predictions=q)
+        diff = q - q_target
+        quadratic_part = tf.minimum(abs(diff), self.clip_delta)
+        linear_part = abs(diff) - quadratic_part
+        loss = 0.5 * quadratic_part ** 2 + self.clip_delta * linear_part
+        td_error = loss
+        self.td_error = td_error
+        #td_error = tf.losses.mean_squared_error(labels=q_target, predictions=q)
         self.ctrain = tf.train.AdamOptimizer(self.LR_C).minimize(td_error, var_list=self.ce_params)
 
         a_loss = - tf.reduce_mean(q)    # maximize the q
         self.a_loss = a_loss
+        self.q = q
         self.atrain = tf.train.AdamOptimizer(self.LR_A).minimize(a_loss, var_list=self.ae_params)
 
         self.sess.run(tf.global_variables_initializer())
@@ -81,7 +89,7 @@ class DDPG(object):
         if self.rng.rand() < epsilon:
             return self.rng.randint(0, self.num_actions)
         s = s.reshape(self.input_width)
-        action_list = self.sess.run(self.a, {self.S: s[np.newaxis, :]})[0]
+        action_list = self.sess.run([self.a], {self.S: s[np.newaxis, :]})[0]
         print(action_list)
         if np.count_nonzero(action_list == 0) == 5:
             return self.rng.randint(0, self.num_actions)
@@ -104,11 +112,12 @@ class DDPG(object):
         ba = ba.reshape(-1)
         temp_a[np.arange(self.batch_size), ba] = 1
         ba = temp_a
+        #print(br)
         #print(ba)
         self.sess.run(self.atrain, {self.S: bs})
-        _, a_loss = self.sess.run([self.ctrain,self.a_loss], {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
+        _, td_error,q = self.sess.run([self.ctrain,self.td_error,self.q], {self.S: bs, self.a: ba, self.R: br, self.S_: bs_})
         #loss = self.sess.run(self.a_loss)
-        print(a_loss)
+        print(td_error[:5])
         return 0#a_loss
 
     def store_transition(self, s, a, r, s_):
