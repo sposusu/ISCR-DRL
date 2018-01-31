@@ -52,18 +52,18 @@ if __name__ == "__main__":
 
     training_args = {
         'num_epochs': args.num_epochs,
-        'batch_size': 64,
+        'batch_size': 128,
         'model_width': 1024,
         'model_height': 2,
-        'learning_rate': 0.0001,
+        'learning_rate': 0.005,
         'clip_delta': 1.0,
         'update_rule': 'deepmind_rmsprop'
     }
 
     reinforce_args = {
         'steps_per_epoch': 1000,
-        'replay_start_size': 500,
-        'replay_memory_size': 5000,
+        'replay_start_size': 300,
+        'replay_memory_size': 10000,
         'epsilon_decay': 100000,
         'epsilon_min': 0.1,
         'epsilon_start': 1.0,

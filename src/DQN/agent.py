@@ -218,7 +218,7 @@ class NeuralAgent(object):
 
         data_set.add_sample(self.last_img, self.last_action, reward, False)
         if self.step_counter >= self.phi_length:
-            phi = data_set.phi(cur_img)
+            phi =  data_set.phi(cur_img)
             action = self.network.choose_action(phi, epsilon)
 #            logging.debug( self.network.q_vals(phi) )
 #            print( 'q_val : '+ str(self.network.q_vals(phi)) +'\taction : '+str(action) )
